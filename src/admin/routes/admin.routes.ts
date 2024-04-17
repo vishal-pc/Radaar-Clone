@@ -17,7 +17,7 @@ adminRouter.post(
   [auth, verifyadminToken],
   adminController.blockUnblockUser
 );
-adminRouter.post(
+adminRouter.get(
   "/deactivated-users",
   [auth, verifyadminToken],
   adminController.deactivateUser

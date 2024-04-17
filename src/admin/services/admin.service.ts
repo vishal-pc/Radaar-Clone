@@ -151,41 +151,26 @@ export const blockUnblockUser = async (
 export const deactivateUser = async (
   page: number,
   size: number,
-  searchValue: string
+  searchValue?: string
 ) => {
   try {
     const pageSize = size || 10;
     const skip = (page - 1) * pageSize;
 
+    const matchQuery: any = {
+      is_user_active: false,
+    };
+
+    if (searchValue) {
+      matchQuery.$or = [
+        { first_name: { $regex: searchValue, $options: "i" } },
+        { last_name: { $regex: searchValue, $options: "i" } },
+      ];
+    }
+
     const users = await User.aggregate([
       {
-        $match: {
-          is_user_active: false,
-          $or: [
-            { first_name: { $regex: searchValue, $options: "i" } },
-            { last_name: { $regex: searchValue, $options: "i" } },
-          ],
-        },
-      },
-      {
-        $lookup: {
-          from: "media",
-          let: { userId: "$_id" },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ["$userId", "$$userId"] },
-                    { $eq: ["$status", "active"] },
-                    { $eq: ["$mediaType", "profile"] },
-                  ],
-                },
-              },
-            },
-          ],
-          as: "media",
-        },
+        $match: matchQuery,
       },
       {
         $skip: skip,
@@ -195,13 +180,7 @@ export const deactivateUser = async (
       },
     ]);
 
-    const totalUsers = await User.countDocuments({
-      is_user_active: false,
-      $or: [
-        { first_name: { $regex: searchValue, $options: "i" } },
-        { last_name: { $regex: searchValue, $options: "i" } },
-      ],
-    });
+    const totalUsers = await User.countDocuments(matchQuery);
 
     return {
       status: true,

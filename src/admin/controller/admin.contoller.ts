@@ -80,7 +80,18 @@ export const blockUnblockUser = async (req: Request, res: Response) => {
 export const deactivateUser = async (req: Request, res: Response) => {
   try {
     const { page, size, searchValue } = req.body;
-    const result = await adminServices.deactivateUser(page, size, searchValue);
+    let result;
+
+    if (
+      searchValue !== undefined &&
+      searchValue !== null &&
+      searchValue !== ""
+    ) {
+      result = await adminServices.deactivateUser(page, size, searchValue);
+    } else {
+      result = await adminServices.deactivateUser(page, size);
+    }
+
     return res.status(200).send(result);
   } catch (error) {
     return res.status(500).send(getErrorMessage(error));
