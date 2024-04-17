@@ -1,6 +1,6 @@
 import User from "../../user/models/user.model";
 import bcrypt from "bcryptjs";
-import * as adminTypes from "../../../types/admin.interface";
+import * as adminTypes from "../admin.interface";
 import jwt from "jsonwebtoken";
 import redisClient from "../../helper/radis/index.redis";
 import Admin from "../models/admin.model";
@@ -8,7 +8,6 @@ import { emailValidate, passwordRegex } from "../../helper/validations/helper";
 import { getErrorMessage } from "../../utils/errors";
 import mongoose from "mongoose";
 import { envConfig } from "../../config/env.config";
-envConfig;
 
 export const registerAdmin = async (
   first_name: string,
