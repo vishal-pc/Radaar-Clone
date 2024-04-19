@@ -1,8 +1,6 @@
 node_modules/
-node_modules
 dist/*
-dist
 redis_data/
 logs/*
-.env
-package-lock.json
+.env/
+package-lock.json/

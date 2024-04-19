@@ -1,0 +1,42 @@
+version: "3"
+services:
+  redis:
+    image: redis
+    container_name: redis
+    restart: unless-stopped
+    network_mode: bridge
+    expose:
+      - 6379
+    volumes:
+      - ./redis_data:/data
+  radaar:
+    container_name: radaar-docker-app
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    restart: unless-stopped
+    network_mode: bridge
+    env_file:
+      - .env
+    ports:
+      - 8080:8080
+    depends_on:
+      - mongo
+    links:
+      - redis
+  mongo:
+    image: mongo
+    container_name: mongo-db
+    restart: unless-stopped
+    network_mode: bridge
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo_data:/data
+volumes:
+  redis_data:
+    driver: local
+  mongoData:
+# This is the main command we can directly run this command to create a image and build up services
+# 1 Run compose file for build :- docker-compose up --build -d
+# 2 Stop compose file :- docker-compose down
